@@ -3,9 +3,3 @@ print("dit is een test")
 
 for i in range(5):
     print(i)
-
-test
-
-test2
-
-test3
