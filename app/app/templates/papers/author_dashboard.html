@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}My Papers{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>My Papers</h1>
+    <a href="{{ url_for('papers.create_paper') }}" class="btn btn-success" style="margin-top: 1rem;">Create New Paper</a>
+</div>
+
+{% if papers %}
+    <div class="paper-list">
+        {% for paper in papers %}
+            <div class="paper-item">
+                <h3>
+                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" style="color: #2c3e50; text-decoration: none;">
+                        {{ paper.title }}
+                    </a>
+                    <span class="badge badge-{{ paper.status }}">{{ paper.status }}</span>
+                </h3>
+
+                <div class="paper-meta">
+                    Created: {{ paper.created_at.strftime('%Y-%m-%d') }} | Updated: {{ paper.updated_at.strftime('%Y-%m-%d') }}
+                </div>
+
+                <div style="margin-top: 0.5rem;">
+                    <strong>Collaborators:</strong>
+                    {% for collab in paper.collaborators %}
+                        {{ collab.first_name }} {{ collab.last_name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+
+                {% if paper.status == 'published' and paper.interested_companies %}
+                    <div style="margin-top: 0.5rem;">
+                        <strong>Interested Companies ({{ paper.interested_companies|length }}):</strong>
+                        {% for interest in paper.interested_companies %}
+                            {{ interest.company_name }}{% if not loop.last %}, {% endif %}
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <div style="margin-top: 1rem;">
+                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="btn btn-small">View Details</a>
+                    <a href="{{ url_for('papers.download_paper', paper_id=paper.id) }}" class="btn btn-small btn-secondary" style="margin-left: 0.5rem;">Download PDF</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card">
+        <p>You don't have any papers yet. <a href="{{ url_for('papers.create_paper') }}">Create your first paper!</a></p>
+    </div>
+{% endif %}
+{% endblock %}
+
