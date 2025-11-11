@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Register as Author{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Register as Author</h1>
+
+    <form method="POST" action="{{ url_for('auth.register_author') }}">
+        <div class="form-group">
+            <label for="first_name">First Name</label>
+            <input type="text" id="first_name" name="first_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="last_name">Last Name</label>
+            <input type="text" id="last_name" name="last_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="university">University (Affiliation)</label>
+            <input type="text" id="university" name="university" required>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Contact Email</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Password</label>
+            <input type="password" id="password" name="password" required minlength="6">
+        </div>
+
+        <button type="submit" class="btn">Register</button>
+    </form>
+
+    <div style="margin-top: 2rem;">
+        <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
+    </div>
+</div>
+{% endblock %}
+

@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Browse Papers{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Published Papers</h1>
+
+    <div class="search-box" style="margin-top: 1.5rem;">
+        <form method="GET" action="{{ url_for('papers.company_dashboard') }}">
+            <input type="text" name="search" placeholder="Search by title or author name..." value="{{ search }}" style="margin-bottom: 0.5rem;">
+            <button type="submit" class="btn btn-small">Search</button>
+            {% if search %}
+                <a href="{{ url_for('papers.company_dashboard') }}" class="btn btn-small btn-secondary">Clear Search</a>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+{% if papers %}
+    <div class="paper-list">
+        {% for paper in papers %}
+            <div class="paper-item">
+                <h3>
+                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" style="color: #2c3e50; text-decoration: none;">
+                        {{ paper.title }}
+                    </a>
+                    {% if paper.is_interested %}
+                        <span style="color: #e74c3c;">★</span>
+                    {% endif %}
+                </h3>
+
+                <div class="paper-meta">
+                    Published: {{ paper.created_at.strftime('%Y-%m-%d') }} | Updated: {{ paper.updated_at.strftime('%Y-%m-%d') }}
+                </div>
+                <div>
+                    <strong>Authors:</strong>
+                    {% for author in paper.authors %}
+                        {{ author.first_name }} {{ author.last_name }} ({{ author.university }}){% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </div>
+
+                <div style="margin-top: 1rem;">
+                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="btn btn-small">View Details</a>
+                    <a href="{{ url_for('papers.download_paper', paper_id=paper.id) }}" class="btn btn-small btn-secondary" style="margin-left: 0.5rem;">Download PDF</a>
+
+                    <form method="POST" action="{{ url_for('interests.toggle_interest', paper_id=paper.id) }}" style="display: inline; margin-left: 0.5rem;">
+                        {% if paper.is_interested %}
+                            <button type="submit" class="btn btn-small btn-danger">Remove Interest</button>
+                        {% else %}
+                            <button type="submit" class="btn btn-small btn-success">Mark as Interested</button>
+                        {% endif %}
+                    </form>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card">
+        <p>No published papers found{% if search %} matching "{{ search }}"{% endif %}.</p>
+    </div>
+{% endif %}
+{% endblock %}
+

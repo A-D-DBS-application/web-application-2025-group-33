@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Paper Collaboration Platform{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Welcome to the Paper Collaboration Platform</h1>
+
+    {% if logged_in %}
+        <p style="margin-top: 1rem;">
+            You are logged in as <strong>{{ session.email }}</strong> ({{ user_type }}).
+        </p>
+        <div style="margin-top: 2rem;">
+            {% if user_type == 'author' %}
+                <a href="{{ url_for('papers.author_dashboard') }}" class="btn">Go to My Papers</a>
+                <a href="{{ url_for('papers.create_paper') }}" class="btn btn-success">Create New Paper</a>
+            {% else %}
+                <a href="{{ url_for('papers.company_dashboard') }}" class="btn">Browse Published Papers</a>
+                <a href="{{ url_for('interests.my_interests') }}" class="btn btn-success">View My Interests</a>
+            {% endif %}
+        </div>
+    {% else %}
+        <p style="margin-top: 1rem;">
+            A platform for authors to collaborate on papers and for companies to discover research.
+        </p>
+
+        <div style="margin-top: 2rem;">
+            <h2>Get Started</h2>
+            <p style="margin-top: 1rem;">Already have an account?</p>
+            <a href="{{ url_for('auth.login') }}" class="btn">Login</a>
+
+            <div style="margin-top: 2rem;">
+                <p>New user? Register as:</p>
+                <div style="margin-top: 0rem;">
+                    <a href="{{ url_for('auth.register_author') }}" class="btn btn-success">Author</a>
+                    <a href="{{ url_for('auth.register_company') }}" class="btn btn-success" style="margin-left: 1rem;">Company</a>
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 3rem;">
+            <h2>Features</h2>
+            <div style="margin-top: 1rem;">
+                <h3 style="margin-top: 1rem;">For Authors:</h3>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li>Upload and manage research papers</li>
+                    <li>Collaborate with other authors</li>
+                    <li>Track paper versions</li>
+                    <li>Publish papers to companies</li>
+                    <li>See which companies are interested in your work</li>
+                </ul>
+
+                <h3 style="margin-top: 1rem;">For Companies:</h3>
+                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                    <li>Browse published research papers</li>
+                    <li>Search by title or author</li>
+                    <li>Manage your list of papers of interest</li>
+                    <li>Download papers for review</li>
+                    <li>See author information and collaborators</li>
+                </ul>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
