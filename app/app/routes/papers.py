@@ -6,7 +6,7 @@ Handles paper creation, viewing, updating, and file uploads.
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
 from routes.auth import login_required, author_required, company_required
 from extensions import db
-from models import Paper, User, PaperCollaborator, PaperInterest, PaperStatus
+from models import Paper, User, Company, PaperCollaborator, PaperInterest, PaperStatus
 from config import Config
 from storage import upload_paper_pdf, download_paper_pdf
 import uuid
@@ -60,8 +60,8 @@ def author_dashboard():
         # interested companies
         if paper['status'] == 'published':
             interests = (
-                db.session.query(User.id, User.company_name, User.email)
-                .join(PaperInterest, User.id == PaperInterest.company_id)
+                db.session.query(Company.id, Company.company_name, Company.email)
+                .join(PaperInterest, Company.id == PaperInterest.company_id)
                 .filter(PaperInterest.paper_id == p.id)
                 .all()
             )
@@ -224,8 +224,8 @@ def view_paper(paper_id):
     # interested companies
     if paper['status'] == 'published':
         interests = (
-            db.session.query(User.id, User.company_name)
-            .join(PaperInterest, User.id == PaperInterest.company_id)
+            db.session.query(Company.id, Company.company_name)
+            .join(PaperInterest, Company.id == PaperInterest.company_id)
             .filter(PaperInterest.paper_id == paper_id)
             .all()
         )

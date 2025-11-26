@@ -31,9 +31,9 @@ def add_collaborator(paper_id):
             flash('Please provide an author email.', 'error')
             return redirect(url_for('papers.view_paper', paper_id=paper_id))
 
-        # Verify the user exists and is an author
+        # Verify the user exists (must be an author)
         collaborator = db.session.query(User).filter_by(email=collaborator_email).first()
-        if not collaborator or (hasattr(collaborator, 'user_type') and getattr(collaborator.user_type, 'value', collaborator.user_type) != 'author'):
+        if not collaborator:
             flash('Author not found.', 'error')
             return redirect(url_for('papers.view_paper', paper_id=paper_id))
 

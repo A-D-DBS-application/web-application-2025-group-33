@@ -6,7 +6,7 @@ Handles companies marking papers as interesting.
 from flask import Blueprint, request, redirect, url_for, flash, session, render_template
 from routes.auth import company_required
 from extensions import db
-from models import Paper, PaperInterest, User
+from models import Paper, PaperInterest, Company
 
 interests_bp = Blueprint('interests', __name__)
 
@@ -73,26 +73,14 @@ def my_interests():
             'updated_at': p.updated_at,
         }
 
-        authors = (
-            db.session.query(User.id, User.first_name, User.last_name, User.university)
-            .join('paper_collaborators', User.id == None)
-        )
-
-        # Instead, fetch authors via PaperCollaborator simple query
-        authors = (
-            db.session.query(User.id, User.first_name, User.last_name, User.university)
-            .join('paper_collaborators', User.id == None)
-        )
-
-        # To keep it simple, use a separate query matching the previous behavior:
-        from models import PaperCollaborator
+        # Authors (collaborators)
+        from models import PaperCollaborator, User
         authors = (
             db.session.query(User.id, User.first_name, User.last_name, User.university)
             .join(PaperCollaborator, User.id == PaperCollaborator.user_id)
             .filter(PaperCollaborator.paper_id == p.id)
             .all()
         )
-
         paper['authors'] = [dict(r._mapping) for r in authors]
         papers.append(paper)
 

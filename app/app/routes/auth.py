@@ -7,7 +7,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 from extensions import db
-from models import User, UserType
+from models import User, Company
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -74,7 +74,6 @@ def register_author():
             user = User(
                 email=email,
                 password_hash=password_hash,
-                user_type=UserType.author,
                 first_name=first_name,
                 last_name=last_name,
                 university=university,
@@ -103,22 +102,21 @@ def register_company():
             address = request.form['address']
 
             # Check if email already exists
-            existing_user = User.query.filter_by(email=email).first()
+            existing_company = Company.query.filter_by(email=email).first()
 
-            if existing_user:
+            if existing_company:
                 flash('Email already registered.', 'error')
                 return redirect(request.url)
 
-            # Hash password and create user
+            # Hash password and create company
             password_hash = generate_password_hash(password)
-            user = User(
+            company = Company(
                 email=email,
                 password_hash=password_hash,
-                user_type=UserType.company,
                 company_name=company_name,
                 address=address,
             )
-            db.session.add(user)
+            db.session.add(company)
             db.session.commit()
 
             flash('Registration successful! Please log in.', 'success')
@@ -139,24 +137,25 @@ def login():
             email = request.form['email']
             password = request.form['password']
 
-            # Get user from database
+            # Try author login first
             user = User.query.filter_by(email=email).first()
-
             if user and check_password_hash(user.password_hash, password):
-                # Store user info in session
                 session['user_id'] = str(user.id)
-                session['user_type'] = user.user_type.value if hasattr(user.user_type, 'value') else user.user_type
+                session['user_type'] = 'author'
                 session['email'] = user.email
-
                 flash('Login successful!', 'success')
+                return redirect(url_for('papers.author_dashboard'))
 
-                # Redirect based on user type
-                if user.user_type == UserType.author:
-                    return redirect(url_for('papers.author_dashboard'))
-                else:
-                    return redirect(url_for('papers.company_dashboard'))
-            else:
-                flash('Invalid email or password.', 'error')
+            # Try company login
+            company = Company.query.filter_by(email=email).first()
+            if company and check_password_hash(company.password_hash, password):
+                session['user_id'] = str(company.id)
+                session['user_type'] = 'company'
+                session['email'] = company.email
+                flash('Login successful!', 'success')
+                return redirect(url_for('papers.company_dashboard'))
+
+            flash('Invalid email or password.', 'error')
 
         except Exception as e:
             flash(f'Error: {str(e)}', 'error')
