@@ -6,7 +6,7 @@ Handles paper creation, viewing, updating, and file uploads.
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session, send_file
 from routes.auth import login_required, author_required, company_required
 from extensions import db
-from models import Paper, User, Company, PaperCollaborator, PaperInterest, PaperStatus
+from models import Paper, User, Company, PaperCollaborator, PaperInterest, PaperStatus, Review
 from config import Config
 from storage import upload_paper_pdf, download_paper_pdf
 import uuid
@@ -239,7 +239,48 @@ def view_paper(paper_id):
         inter = db.session.query(PaperInterest).filter_by(paper_id=paper_id, company_id=user_id).first()
         is_interested = inter is not None
 
-    return render_template('papers/view_paper.html', paper=paper, user_type=user_type, is_collaborator=is_collaborator, is_interested=is_interested)
+    # Fetch reviews for this paper
+    reviews = []
+    if paper['status'] == 'published':
+        review_rows = db.session.query(Review).filter_by(paper_id=paper_id).order_by(Review.created_at.desc()).all()
+        for r in review_rows:
+            review_data = {
+                'id': r.id,
+                'rating': r.rating,
+                'comment': r.comment,
+                'created_at': r.created_at,
+                'reviewer_type': 'author' if r.user_id else 'company',
+            }
+            # Get reviewer name
+            if r.user_id:
+                reviewer = db.session.query(User.first_name, User.last_name).filter_by(id=r.user_id).first()
+                if reviewer:
+                    review_data['reviewer_name'] = f"{reviewer.first_name} {reviewer.last_name}"
+                else:
+                    review_data['reviewer_name'] = "Unknown Author"
+            else:
+                reviewer = db.session.query(Company.company_name).filter_by(id=r.company_id).first()
+                if reviewer:
+                    review_data['reviewer_name'] = reviewer.company_name
+                else:
+                    review_data['reviewer_name'] = "Unknown Company"
+            reviews.append(review_data)
+
+    # Check if current user has already reviewed this paper
+    user_has_reviewed = False
+    if paper['status'] == 'published':
+        if user_type == 'author':
+            existing_review = db.session.query(Review).filter_by(paper_id=paper_id, user_id=user_id).first()
+        else:
+            existing_review = db.session.query(Review).filter_by(paper_id=paper_id, company_id=user_id).first()
+        user_has_reviewed = existing_review is not None
+
+    # Calculate average rating
+    avg_rating = None
+    if reviews:
+        avg_rating = round(sum(r['rating'] for r in reviews) / len(reviews), 1)
+
+    return render_template('papers/view_paper.html', paper=paper, user_type=user_type, is_collaborator=is_collaborator, is_interested=is_interested, reviews=reviews, user_has_reviewed=user_has_reviewed, avg_rating=avg_rating)
 
 
 @papers_bp.route('/paper/<paper_id>/update', methods=['POST'])
@@ -353,3 +394,63 @@ def download_paper(paper_id):
     else:
         flash('Paper file not found.', 'error')
         return redirect(url_for('papers.view_paper', paper_id=paper_id))
+
+
+@papers_bp.route('/paper/<paper_id>/review', methods=['POST'])
+@login_required
+def submit_review(paper_id):
+    """Submit a review for a paper"""
+    user_id = session['user_id']
+    user_type = session['user_type']
+
+    try:
+        # Check paper exists and is published
+        p = db.session.query(Paper).filter_by(id=paper_id).first()
+        if not p:
+            flash('Paper not found.', 'error')
+            return redirect(url_for('home'))
+
+        if p.status != PaperStatus.published:
+            flash('You can only review published papers.', 'error')
+            return redirect(url_for('papers.view_paper', paper_id=paper_id))
+
+        # Get form data
+        rating = request.form.get('rating')
+        comment = request.form.get('comment', '').strip()
+
+        if not rating:
+            flash('Please select a rating.', 'error')
+            return redirect(url_for('papers.view_paper', paper_id=paper_id))
+
+        rating = int(rating)
+        if rating < 1 or rating > 5:
+            flash('Rating must be between 1 and 5 stars.', 'error')
+            return redirect(url_for('papers.view_paper', paper_id=paper_id))
+
+        # Check if user already reviewed this paper
+        if user_type == 'author':
+            existing = db.session.query(Review).filter_by(paper_id=paper_id, user_id=user_id).first()
+        else:
+            existing = db.session.query(Review).filter_by(paper_id=paper_id, company_id=user_id).first()
+
+        if existing:
+            flash('You have already reviewed this paper.', 'error')
+            return redirect(url_for('papers.view_paper', paper_id=paper_id))
+
+        # Create review
+        review_id = str(uuid.uuid4())
+        if user_type == 'author':
+            review = Review(id=review_id, paper_id=paper_id, user_id=user_id, rating=rating, comment=comment if comment else None)
+        else:
+            review = Review(id=review_id, paper_id=paper_id, company_id=user_id, rating=rating, comment=comment if comment else None)
+
+        db.session.add(review)
+        db.session.commit()
+
+        flash('Review submitted successfully!', 'success')
+
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error: {str(e)}', 'error')
+
+    return redirect(url_for('papers.view_paper', paper_id=paper_id))

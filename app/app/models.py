@@ -51,3 +51,14 @@ class PaperInterest(db.Model):
     company_id = db.Column(db.String(36), db.ForeignKey('companies.id'), primary_key=True)
     added_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
+
+class Review(db.Model):
+    __tablename__ = 'reviews'
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    paper_id = db.Column(db.String(36), db.ForeignKey('papers.id'), nullable=False)
+    # Either user_id OR company_id will be set (not both)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=True)
+    company_id = db.Column(db.String(36), db.ForeignKey('companies.id'), nullable=True)
+    rating = db.Column(db.Integer, nullable=False)  # 1-5 stars
+    comment = db.Column(db.Text, nullable=True)  # Optional written review
+    created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
