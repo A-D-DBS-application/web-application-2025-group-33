@@ -68,6 +68,19 @@ CREATE TABLE paper_interests (
 );
 
 ------------------------------------------------------
+-- ALTER TABLES FOR RECOMMENDATION ALGORITHM
+------------------------------------------------------
+ALTER TABLE users 
+ADD COLUMN field_of_research TEXT,
+ADD COLUMN years_of_experience INTEGER DEFAULT 0;
+
+ALTER TABLE companies 
+ADD COLUMN research_interests TEXT;
+
+ALTER TABLE paper_interests 
+ADD COLUMN relevance_score FLOAT DEFAULT 0.0;
+
+------------------------------------------------------
 -- Indexes
 ------------------------------------------------------
 CREATE INDEX idx_users_email ON users(email);
@@ -81,3 +94,10 @@ CREATE INDEX idx_paper_collaborators_paper ON paper_collaborators(paper_id);
 
 CREATE INDEX idx_paper_interests_company ON paper_interests(company_id);
 CREATE INDEX idx_paper_interests_paper ON paper_interests(paper_id);
+
+------------------------------------------------------
+-- NEW INDEXES FOR RECOMMENDATIONS
+------------------------------------------------------
+CREATE INDEX idx_users_field_research ON users(field_of_research);
+CREATE INDEX idx_users_experience ON users(years_of_experience);
+CREATE INDEX idx_paper_interests_relevance ON paper_interests(relevance_score);
