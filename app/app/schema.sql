@@ -13,7 +13,11 @@ CREATE TABLE users (
     last_name TEXT NOT NULL,
     university TEXT,
 
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    -- Additional fields
+    field_of_research TEXT,
+    years_of_experience INTEGER DEFAULT 0
 );
 
 ------------------------------------------------------
@@ -27,7 +31,10 @@ CREATE TABLE companies (
     company_name TEXT NOT NULL,
     address TEXT,
 
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+
+    -- Additional field
+    research_interests TEXT
 );
 
 ------------------------------------------------------
@@ -64,6 +71,9 @@ CREATE TABLE paper_interests (
     company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
     added_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
+    -- Additional field
+    relevance_score FLOAT DEFAULT 0.0,
+
     PRIMARY KEY (paper_id, company_id)
 );
 
@@ -81,3 +91,8 @@ CREATE INDEX idx_paper_collaborators_paper ON paper_collaborators(paper_id);
 
 CREATE INDEX idx_paper_interests_company ON paper_interests(company_id);
 CREATE INDEX idx_paper_interests_paper ON paper_interests(paper_id);
+
+-- Additional indexes for performance
+CREATE INDEX idx_users_field_research ON users(field_of_research);
+CREATE INDEX idx_users_experience ON users(years_of_experience);
+CREATE INDEX idx_paper_interests_relevance ON paper_interests(relevance_score);
