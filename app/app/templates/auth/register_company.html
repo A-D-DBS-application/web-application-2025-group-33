@@ -18,6 +18,12 @@
         </div>
 
         <div class="form-group">
+            <label for="research_interests">Research Interests <span style="color: #7f8c8d;">(comma-separated)</span></label>
+            <textarea id="research_interests" name="research_interests" required
+                      placeholder="e.g., Machine Learning, AI, Data Science, Computer Vision"></textarea>
+        </div>
+
+        <div class="form-group">
             <label for="email">Contact Email</label>
             <input type="email" id="email" name="email" required>
         </div>
@@ -30,7 +36,7 @@
         <button type="submit" class="btn">Register</button>
     </form>
 
-    <div class="mt-3">
+    <div style="margin-top: 2rem;">
         <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
     </div>
 </div>
