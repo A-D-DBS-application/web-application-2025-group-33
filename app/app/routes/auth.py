@@ -61,12 +61,24 @@ def register_author():
             first_name = request.form['first_name']
             last_name = request.form['last_name']
             university = request.form['university']
+            field_of_research = request.form['field_of_research']
+            years_of_experience = request.form['years_of_experience']
 
             # Check if email already exists
             existing_user = User.query.filter_by(email=email).first()
 
             if existing_user:
                 flash('Email already registered.', 'error')
+                return redirect(request.url)
+
+            # Validate years of experience
+            try:
+                years_exp = int(years_of_experience)
+                if years_exp < 0 or years_exp > 70:
+                    flash('Years of experience must be between 0 and 70.', 'error')
+                    return redirect(request.url)
+            except ValueError:
+                flash('Years of experience must be a number.', 'error')
                 return redirect(request.url)
 
             # Hash password and create user
@@ -77,6 +89,8 @@ def register_author():
                 first_name=first_name,
                 last_name=last_name,
                 university=university,
+                field_of_research=field_of_research,
+                years_of_experience=years_exp,
             )
             db.session.add(user)
             db.session.commit()
@@ -100,12 +114,18 @@ def register_company():
             password = request.form['password']
             company_name = request.form['company_name']
             address = request.form['address']
+            research_interests = request.form['research_interests']
 
             # Check if email already exists
             existing_company = Company.query.filter_by(email=email).first()
 
             if existing_company:
                 flash('Email already registered.', 'error')
+                return redirect(request.url)
+
+            # Validate research interests
+            if not research_interests.strip():
+                flash('Please enter at least one research interest.', 'error')
                 return redirect(request.url)
 
             # Hash password and create company
@@ -115,6 +135,7 @@ def register_company():
                 password_hash=password_hash,
                 company_name=company_name,
                 address=address,
+                research_interests=research_interests,
             )
             db.session.add(company)
             db.session.commit()
