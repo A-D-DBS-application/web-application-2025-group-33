@@ -5,15 +5,18 @@
 {% block content %}
 <div class="card">
     <h1>My Papers</h1>
-    <a href="{{ url_for('papers.create_paper') }}" class="btn btn-success" style="margin-top: 1rem;">Create New Paper</a>
+    <div class="search-box mt-2">
+        <input type="text" placeholder="Filter by title or collaborator..." class="mb-1" data-filter-input data-list-selector=".paper-list">
+    </div>
+    <a href="{{ url_for('papers.create_paper') }}" class="btn btn-success mt-1">Create New Paper</a>
 </div>
 
 {% if papers %}
     <div class="paper-list">
         {% for paper in papers %}
-            <div class="paper-item">
+            <div class="paper-item filter-item" data-title="{{ paper.title }}">
                 <h3>
-                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" style="color: #2c3e50; text-decoration: none;">
+                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="paper-link">
                         {{ paper.title }}
                     </a>
                     <span class="badge badge-{{ paper.status }}">{{ paper.status }}</span>
@@ -23,7 +26,7 @@
                     Created: {{ paper.created_at.strftime('%Y-%m-%d') }} | Updated: {{ paper.updated_at.strftime('%Y-%m-%d') }}
                 </div>
 
-                <div style="margin-top: 0.5rem;">
+                <div class="mt-1">
                     <strong>Collaborators:</strong>
                     {% for collab in paper.collaborators %}
                         {{ collab.first_name }} {{ collab.last_name }}{% if not loop.last %}, {% endif %}
@@ -31,7 +34,7 @@
                 </div>
 
                 {% if paper.status == 'published' and paper.interested_companies %}
-                    <div style="margin-top: 0.5rem;">
+                    <div class="mt-1">
                         <strong>Interested Companies ({{ paper.interested_companies|length }}):</strong>
                         {% for interest in paper.interested_companies %}
                             {{ interest.company_name }}{% if not loop.last %}, {% endif %}
@@ -39,9 +42,9 @@
                     </div>
                 {% endif %}
 
-                <div style="margin-top: 1rem;">
+                <div class="mt-2">
                     <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="btn btn-small">View Details</a>
-                    <a href="{{ url_for('papers.download_paper', paper_id=paper.id) }}" class="btn btn-small btn-secondary" style="margin-left: 0.5rem;">Download PDF</a>
+                    <a href="{{ url_for('papers.download_paper', paper_id=paper.id) }}" class="btn btn-small btn-secondary ml-1">Download PDF</a>
                 </div>
             </div>
         {% endfor %}

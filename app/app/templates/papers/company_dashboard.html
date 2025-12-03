@@ -6,9 +6,9 @@
 <div class="card">
     <h1>Published Papers</h1>
 
-    <div class="search-box" style="margin-top: 1.5rem;">
+    <div class="search-box mt-3">
         <form method="GET" action="{{ url_for('papers.company_dashboard') }}">
-            <input type="text" name="search" placeholder="Search by title or author name..." value="{{ search }}" style="margin-bottom: 0.5rem;">
+            <input type="text" name="search" placeholder="Search by title or author name..." value="{{ search }}" class="mb-1">
             <button type="submit" class="btn btn-small">Search</button>
             {% if search %}
                 <a href="{{ url_for('papers.company_dashboard') }}" class="btn btn-small btn-secondary">Clear Search</a>
@@ -22,11 +22,11 @@
         {% for paper in papers %}
             <div class="paper-item">
                 <h3>
-                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" style="color: #2c3e50; text-decoration: none;">
+                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="paper-link">
                         {{ paper.title }}
                     </a>
                     {% if paper.is_interested %}
-                        <span style="color: #e74c3c;">★</span>
+                        <span class="star">★</span>
                     {% endif %}
                 </h3>
 
@@ -40,11 +40,11 @@
                     {% endfor %}
                 </div>
 
-                <div style="margin-top: 1rem;">
+                <div class="mt-2">
                     <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="btn btn-small">View Details</a>
-                    <a href="{{ url_for('papers.download_paper', paper_id=paper.id) }}" class="btn btn-small btn-secondary" style="margin-left: 0.5rem;">Download PDF</a>
+                    <a href="{{ url_for('papers.download_paper', paper_id=paper.id) }}" class="btn btn-small btn-secondary ml-1">Download PDF</a>
 
-                    <form method="POST" action="{{ url_for('interests.toggle_interest', paper_id=paper.id) }}" style="display: inline; margin-left: 0.5rem;">
+                    <form method="POST" action="{{ url_for('interests.toggle_interest', paper_id=paper.id) }}" class="inline-form ml-1">
                         {% if paper.is_interested %}
                             <button type="submit" class="btn btn-small btn-danger">Remove Interest</button>
                         {% else %}

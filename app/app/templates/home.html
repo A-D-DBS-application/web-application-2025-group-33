@@ -7,10 +7,10 @@
     <h1>Welcome to Reviewr</h1>
 
     {% if logged_in %}
-        <p style="margin-top: 1rem;">
+        <p class="mt-1">
             You are logged in as <strong>{{ session.email }}</strong> ({{ user_type }}).
         </p>
-        <div style="margin-top: 2rem;">
+        <div class="mt-2">
             {% if user_type == 'author' %}
                 <a href="{{ url_for('papers.author_dashboard') }}" class="btn">Go to My Papers</a>
                 <a href="{{ url_for('papers.create_paper') }}" class="btn btn-success">Create New Paper</a>
@@ -20,29 +20,29 @@
             {% endif %}
         </div>
     {% else %}
-        <p style="margin-top: 1rem;">
+        <p class="mt-1">
             A platform for authors to collaborate on papers and for companies to discover research.
         </p>
 
-        <div style="margin-top: 2rem;">
+        <div class="mt-2">
             <h2>Get Started</h2>
-            <p style="margin-top: 1rem;">Already have an account?</p>
+            <p class="mt-1">Already have an account?</p>
             <a href="{{ url_for('auth.login') }}" class="btn">Login</a>
 
-            <div style="margin-top: 2rem;">
+            <div class="mt-2">
                 <p>New user? Register as:</p>
-                <div style="margin-top: 0rem;">
+                <div>
                     <a href="{{ url_for('auth.register_author') }}" class="btn btn-success">Author</a>
-                    <a href="{{ url_for('auth.register_company') }}" class="btn btn-success" style="margin-left: 1rem;">Company</a>
+                    <a href="{{ url_for('auth.register_company') }}" class="btn btn-success ml-2">Company</a>
                 </div>
             </div>
         </div>
 
-        <div style="margin-top: 3rem;">
+        <div class="mt-3">
             <h2>Features</h2>
-            <div style="margin-top: 1rem;">
-                <h3 style="margin-top: 1rem;">For Authors:</h3>
-                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+            <div class="mt-1">
+                <h3 class="mt-1">For Authors:</h3>
+                <ul class="ml-3 mt-1">
                     <li>Upload and manage research papers</li>
                     <li>Collaborate with other authors</li>
                     <li>Track paper versions</li>
@@ -50,8 +50,8 @@
                     <li>See which companies are interested in your work</li>
                 </ul>
 
-                <h3 style="margin-top: 1rem;">For Companies:</h3>
-                <ul style="margin-left: 2rem; margin-top: 0.5rem;">
+                <h3 class="mt-1">For Companies:</h3>
+                <ul class="ml-3 mt-1">
                     <li>Browse published research papers</li>
                     <li>Search by title or author</li>
                     <li>Manage your list of papers of interest</li>
