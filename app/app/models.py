@@ -13,6 +13,8 @@ class User(db.Model):
     first_name = db.Column(db.String(100), nullable=False)
     last_name = db.Column(db.String(100), nullable=False)
     university = db.Column(db.String(255))
+    field_of_research = db.Column(db.String(255))
+    years_of_experience = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
 # Company model
@@ -23,6 +25,7 @@ class Company(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     company_name = db.Column(db.String(255), nullable=False)
     address = db.Column(db.String(500))
+    research_interests = db.Column(db.String(1000))
     created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
 
 class PaperStatus(enum.Enum):
@@ -50,4 +53,5 @@ class PaperInterest(db.Model):
     paper_id = db.Column(db.String(36), db.ForeignKey('papers.id'), primary_key=True)
     company_id = db.Column(db.String(36), db.ForeignKey('companies.id'), primary_key=True)
     added_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+    relevance_score = db.Column(db.Float, default=0.0)
 
