@@ -54,4 +54,6 @@ class PaperInterest(db.Model):
     company_id = db.Column(db.String(36), db.ForeignKey('companies.id'), primary_key=True)
     added_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     relevance_score = db.Column(db.Float, default=0.0)
+    business_relevance_score = db.Column(db.Float, default=0.0)  # ADD THIS
+    is_business_critical = db.Column(db.Boolean, default=False)  # ADD THIS
 

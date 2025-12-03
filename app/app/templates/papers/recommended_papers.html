@@ -29,6 +29,13 @@
                             {% else %}
                                 <span style="display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: white; background-color: #95a5a6;">Match: {{ paper.relevance_score }}%</span>
                             {% endif %}
+                            
+                            <!-- Add business relevance badge if available -->
+                            {% if paper.get('business_relevance_score', 0) > 0 %}
+                                <span style="display: inline-block; margin-left: 0.5rem; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: white; background-color: #3498db;">
+                                    📊 Business Score: {{ paper.business_relevance_score }}%
+                                </span>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -68,4 +75,47 @@
         <a href="{{ url_for('papers.company_dashboard') }}" class="btn" style="margin-top: 1rem;">Browse All Papers</a>
     </div>
 {% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle business critical status
+        document.querySelectorAll('.toggle-critical').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                var paperId = this.getAttribute('data-paper-id');
+                
+                fetch('/paper/' + paperId + '/interest/toggle-critical', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({})
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update button text and class
+                        var status = data.is_business_critical ? 'unmark' : 'mark';
+                        btn.classList.toggle('btn-success');
+                        btn.classList.toggle('btn-secondary');
+                        btn.innerHTML = data.is_business_critical ? 'Business Critical' : 'Mark as Business Critical';
+                        
+                        // Optionally, show a toast or alert
+                        alert('Paper ' + (data.is_business_critical ? 'marked' : 'unmarked') + ' as business critical!');
+                    } else {
+                        alert('Error: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again later.');
+                });
+            });
+        });
+    });
+</script>
 {% endblock %}
