@@ -100,6 +100,7 @@ def register_company():
             password = request.form['password']
             company_name = request.form['company_name']
             address = request.form['address']
+            research_interests = request.form.get('research_interests', '')
 
             # Check if email already exists
             existing_company = Company.query.filter_by(email=email).first()
@@ -115,6 +116,7 @@ def register_company():
                 password_hash=password_hash,
                 company_name=company_name,
                 address=address,
+                research_interests=research_interests,
             )
             db.session.add(company)
             db.session.commit()
