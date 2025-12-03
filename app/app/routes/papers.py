@@ -67,12 +67,11 @@ def calculate_business_relevance_score(paper_id, company_id):
 
 def calculate_relevance_score(paper_id, company_id):
     """
-    Calculate total relevance score between a paper and a company.
+    Calculate relevance score between a paper and a company.
     
     Weighting:
-    - Research field match: 40%
-    - Researcher experience: 40%
-    - Business relevance: 20%
+    - Research field match: 50%
+    - Researcher experience: 50%
     - Boost: +20% if company interested in other papers by same authors
     
     Returns:
@@ -96,7 +95,7 @@ def calculate_relevance_score(paper_id, company_id):
     if not authors:
         return 0.0
     
-    # Calculate field match score (40% weight)
+    # Calculate field match score (50% weight)
     field_matches = 0
     for author in authors:
         if author.field_of_research:
@@ -105,20 +104,17 @@ def calculate_relevance_score(paper_id, company_id):
                 if interest in author_field or author_field in interest:
                     field_matches += 1
     
-    field_score = (field_matches / len(authors)) * 0.4  # 40% weight
+    field_score = (field_matches / len(authors)) * 0.5  # 50% weight
     
-    # Calculate experience match score (40% weight)
+    # Calculate experience match score (50% weight)
     avg_experience = sum(
         author.years_of_experience or 0 for author in authors
     ) / len(authors)
     
-    experience_score = min(1.0, (avg_experience / 20)) * 0.4  # 40% weight
-    
-    # Calculate business relevance score (20% weight)
-    business_score = calculate_business_relevance_score(paper_id, company_id) * 0.2  # 20% weight
+    experience_score = min(1.0, (avg_experience / 20)) * 0.5  # 50% weight
     
     # Base score (0.0 to 1.0)
-    base_score = field_score + experience_score + business_score
+    base_score = field_score + experience_score
     
     # Check if company is interested in other papers by any of these authors
     author_ids = [author.id for author in authors]
