@@ -25,8 +25,8 @@ class Company(db.Model):
     password_hash = db.Column(db.String(255), nullable=False)
     company_name = db.Column(db.String(255), nullable=False)
     address = db.Column(db.String(500))
+    research_interests = db.Column(db.String(1000))  # MAKE SURE THIS LINE EXISTS
     created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
-    research_interests = db.Column(db.String(1000))
 
 class PaperStatus(enum.Enum):
     draft = 'draft'

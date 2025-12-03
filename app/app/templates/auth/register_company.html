@@ -40,5 +40,25 @@
         <p>Already have an account? <a href="{{ url_for('auth.login') }}">Login</a></p>
     </div>
 </div>
+
+{% set email = form.email.data %}
+{% set password = form.password.data %}
+{% set company_name = form.company_name.data %}
+{% set address = form.address.data %}
+{% set research_interests = form.research_interests.data %}
+
+{% if form.validate_on_submit() %}
+    {% set password_hash = generate_password_hash(password) %}
+    {% set company = Company(
+        email=email,
+        password_hash=password_hash,
+        company_name=company_name,
+        address=address,
+        research_interests=research_interests
+    ) %}
+    {{ db.session.add(company) }}
+    {{ db.session.commit() }}
+    <p>Registration successful! You can now <a href="{{ url_for('auth.login') }}">login</a>.</p>
+{% endif %}
 {% endblock %}
 
