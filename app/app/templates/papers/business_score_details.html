@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Business Score Details - {{ paper_title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Business Relevance Score Details</h1>
+    <p style="margin-top: 0.5rem; color: #7f8c8d;">{{ paper_title }}</p>
+</div>
+
+<div class="card" style="background-color: #f0f8ff;">
+    <h2 style="color: #3498db;">Score Breakdown</h2>
+    
+    <div style="margin-top: 1.5rem;">
+        <!-- Overall Score -->
+        <div style="padding: 1rem; background-color: white; border-radius: 8px; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong style="font-size: 1.1rem;">Overall Business Relevance Score</strong>
+                </div>
+                <div style="font-size: 2rem; color: #3498db; font-weight: 600;">
+                    {{ metrics.business_relevance_score }}%
+                </div>
+            </div>
+        </div>
+
+        <!-- Popularity Score -->
+        <div style="padding: 1rem; background-color: white; border-radius: 8px; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Popularity Score</strong><br>
+                    <span style="color: #7f8c8d; font-size: 0.9rem;">
+                        {{ metrics.total_interested_companies }} companies interested
+                    </span>
+                </div>
+                <div style="font-size: 1.5rem; color: #f39c12; font-weight: 600;">
+                    {{ metrics.popularity_score }}%
+                </div>
+            </div>
+            <div style="margin-top: 0.5rem; width: 100%; background-color: #ecf0f1; border-radius: 10px; height: 8px; overflow: hidden;">
+                <div style="width: {{ metrics.popularity_score }}%; background-color: #f39c12; height: 100%;"></div>
+            </div>
+        </div>
+
+        <!-- Business Critical -->
+        <div style="padding: 1rem; background-color: white; border-radius: 8px; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Business Critical Indicator</strong><br>
+                    <span style="color: #7f8c8d; font-size: 0.9rem;">
+                        {{ metrics.business_critical_count }} companies marked as critical
+                    </span>
+                </div>
+                <div>
+                    {% if metrics.business_critical_count > 0 %}
+                        <span style="display: inline-block; padding: 0.5rem 1rem; background-color: #e74c3c; color: white; border-radius: 20px;">
+                            ⭐ Industry Priority
+                        </span>
+                    {% else %}
+                        <span style="display: inline-block; padding: 0.5rem 1rem; background-color: #95a5a6; color: white; border-radius: 20px;">
+                            Standard
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Your Status -->
+        <div style="padding: 1rem; background-color: #e8f8f5; border-radius: 8px; margin-bottom: 1rem; border-left: 4px solid #27ae60;">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <strong>Your Status</strong>
+                </div>
+                <div>
+                    {% if metrics.is_business_critical %}
+                        <span style="display: inline-block; padding: 0.5rem 1rem; background-color: #27ae60; color: white; border-radius: 20px;">
+                            ✓ You marked as critical
+                        </span>
+                    {% else %}
+                        <span style="display: inline-block; padding: 0.5rem 1rem; background-color: #bdc3c7; color: white; border-radius: 20px;">
+                            Not marked
+                        </span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Explanation -->
+    <div style="margin-top: 2rem; padding: 1rem; background-color: #fef5e7; border-radius: 8px;">
+        <h3 style="color: #f39c12;">How is Business Relevance Calculated?</h3>
+        <ul style="margin-top: 1rem; margin-left: 1.5rem;">
+            <li><strong>Popularity (40%):</strong> How many other companies are interested in this paper</li>
+            <li><strong>Business Critical (60%):</strong> How many companies marked this as business critical</li>
+        </ul>
+        <p style="margin-top: 1rem; color: #7f8c8d; font-size: 0.95rem;">
+            Higher scores indicate papers that are trending in your industry and marked as strategically important by other companies.
+        </p>
+    </div>
+
+    <div style="margin-top: 2rem;">
+        <a href="{{ url_for('papers.view_paper', paper_id=paper_id) }}" class="btn">Back to Paper</a>
+    </div>
+</div>
+{% endblock %}

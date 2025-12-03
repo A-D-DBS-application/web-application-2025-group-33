@@ -156,6 +156,47 @@
         {% endfor %}
       </ul>
     </div>
+
+    <!-- Business Relevance Section -->
+    <div class="card" style="margin-top: 2rem; background-color: #f0f8ff; border-left: 4px solid #3498db;">
+      <h2>Business Relevance</h2>
+      
+      <div style="margin-top: 1rem;">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+              <div>
+                  <strong>Business Relevance Score:</strong>
+                  <div style="font-size: 1.5rem; color: #3498db; margin-top: 0.5rem;">
+                      {{ paper.get('business_relevance_score', 0) }}%
+                  </div>
+              </div>
+              <div>
+                  <strong>Status:</strong>
+                  <div style="margin-top: 0.5rem;">
+                      {% if paper.get('is_business_critical') %}
+                          <span style="display: inline-block; padding: 0.5rem 1rem; background-color: #e74c3c; color: white; border-radius: 20px;">
+                              ⭐ Marked as Business Critical
+                          </span>
+                      {% else %}
+                          <span style="display: inline-block; padding: 0.5rem 1rem; background-color: #95a5a6; color: white; border-radius: 20px;">
+                              Not marked as critical
+                          </span>
+                      {% endif %}
+                  </div>
+              </div>
+          </div>
+          
+          <div style="margin-top: 1rem;">
+              <form method="POST" action="{{ url_for('papers.toggle_business_critical', paper_id=paper.id) }}" style="display: inline;">
+                  {% if paper.get('is_business_critical') %}
+                      <button type="submit" class="btn btn-secondary">Unmark as Business Critical</button>
+                  {% else %}
+                      <button type="submit" class="btn btn-success">Mark as Business Critical</button>
+                  {% endif %}
+              </form>
+              <a href="{{ url_for('papers.get_business_score_details', paper_id=paper.id) }}" class="btn btn-small" style="margin-left: 0.5rem;">View Details</a>
+          </div>
+      </div>
+    </div>
   {% endif %}
 
   <div class="mt-3">

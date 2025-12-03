@@ -9,7 +9,7 @@
     <div class="search-box mt-3">
         <form method="GET" action="{{ url_for('papers.company_dashboard') }}">
             <input type="text" name="search" placeholder="Search papers, authors, or research fields..." 
-                   value="{{ search }}" class="mb-1">
+                   value="{{ search }}">
             <button type="submit" class="btn btn-small">Search</button>
             {% if search %}
                 <a href="{{ url_for('papers.company_dashboard') }}" class="btn btn-small btn-secondary">Clear Search</a>
@@ -62,4 +62,27 @@
     </div>
 {% endif %}
 {% endblock %}
+
+@papers_bp.route('/company/dashboard')
+@company_required
+def company_dashboard():
+    """Company dashboard showing published papers"""
+    user_id = session['user_id']
+    search = request.args.get('search', '')
+
+    query = db.session.query(Paper).join(PaperCollaborator).join(User).filter(Paper.status == PaperStatus.published)
+
+    if search:
+        like = f"%{search.lower()}%"
+        query = query.filter(
+            db.or_(
+                db.func.lower(Paper.title).like(like),
+                db.func.lower(User.first_name + ' ' + User.last_name).like(like),
+                db.func.lower(User.field_of_research).like(like)
+            )
+        )
+
+    papers = query.distinct().order_by(Paper.created_at.desc()).all()
+
+    return render_template('papers/company_dashboard.html', papers=papers, search=search)
 

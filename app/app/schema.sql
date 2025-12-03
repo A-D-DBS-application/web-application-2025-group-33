@@ -71,8 +71,10 @@ CREATE TABLE paper_interests (
     company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
     added_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
 
-    -- Additional field
+    -- Additional fields
     relevance_score FLOAT DEFAULT 0.0,
+    business_relevance_score FLOAT DEFAULT 0.0,
+    is_business_critical BOOLEAN DEFAULT FALSE,
 
     PRIMARY KEY (paper_id, company_id)
 );
@@ -96,3 +98,4 @@ CREATE INDEX idx_paper_interests_paper ON paper_interests(paper_id);
 CREATE INDEX idx_users_field_research ON users(field_of_research);
 CREATE INDEX idx_users_experience ON users(years_of_experience);
 CREATE INDEX idx_paper_interests_relevance ON paper_interests(relevance_score);
+CREATE INDEX idx_paper_interests_business ON paper_interests(business_relevance_score);
