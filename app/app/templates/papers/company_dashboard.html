@@ -8,7 +8,8 @@
 
     <div class="search-box mt-3">
         <form method="GET" action="{{ url_for('papers.company_dashboard') }}">
-            <input type="text" name="search" placeholder="Search by title or author name..." value="{{ search }}" class="mb-1">
+            <input type="text" name="search" placeholder="Search papers, authors, or research fields..." 
+                   value="{{ search }}" class="mb-1">
             <button type="submit" class="btn btn-small">Search</button>
             {% if search %}
                 <a href="{{ url_for('papers.company_dashboard') }}" class="btn btn-small btn-secondary">Clear Search</a>
