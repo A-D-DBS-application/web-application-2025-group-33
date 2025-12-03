@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Recommended Papers{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Recommended Papers for You</h1>
+    <p style="margin-top: 0.5rem; color: #7f8c8d;">Based on your research interests and preferred researcher experience level.</p>
+</div>
+
+{% if papers %}
+    <div class="paper-list">
+        {% for paper in papers %}
+            <div class="paper-item">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <div style="flex: 1;">
+                        <h3>
+                            <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" 
+                               style="color: #2c3e50; text-decoration: none;">
+                                {{ paper.title }}
+                            </a>
+                        </h3>
+                        
+                        <div style="margin-top: 0.75rem; margin-bottom: 0.75rem;">
+                            {% if paper.relevance_score >= 75 %}
+                                <span class="relevance-score relevance-high">Match: {{ paper.relevance_score }}%</span>
+                            {% elif paper.relevance_score >= 50 %}
+                                <span class="relevance-score relevance-medium">Match: {{ paper.relevance_score }}%</span>
+                            {% else %}
+                                <span class="relevance-score relevance-low">Match: {{ paper.relevance_score }}%</span>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="paper-meta">
+                    <strong>Published:</strong> {{ paper.created_at.strftime('%B %d, %Y') }}
+                </div>
+
+                {% if paper.authors %}
+                    <div style="margin-top: 1rem; margin-bottom: 1rem;">
+                        <strong>Authors:</strong>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            {% for author in paper.authors %}
+                                <li style="margin-bottom: 0.5rem;">
+                                    <strong>{{ author.first_name }} {{ author.last_name }}</strong><br>
+                                    <span style="color: #7f8c8d; font-size: 0.9rem;">
+                                        {{ author.university }}<br>
+                                        {{ author.years_of_experience }} years in {{ author.field_of_research }}
+                                    </span>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+
+                <div style="margin-top: 1rem;">
+                    <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="btn btn-small">View Details</a>
+                    <a href="{{ url_for('papers.download_paper', paper_id=paper.id) }}" 
+                       class="btn btn-small btn-secondary" style="margin-left: 0.5rem;">Download PDF</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <div class="card">
+        <p style="color: #7f8c8d;">No recommended papers found at this time. Check back later as more papers are published!</p>
+        <a href="{{ url_for('papers.company_dashboard') }}" class="btn" style="margin-top: 1rem;">Browse All Papers</a>
+    </div>
+{% endif %}
+{% endblock %}
