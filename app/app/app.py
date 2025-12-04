@@ -10,6 +10,7 @@ from routes.papers import papers_bp
 from routes.collaborators import collaborators_bp
 from routes.interests import interests_bp
 from extensions import db, migrate
+from models import User, Paper, PaperStatus
 
 # Create Flask application
 app = Flask(__name__)
@@ -38,10 +39,14 @@ def inject_user():
 @app.route('/')
 def home():
     """Home page with login/register options"""
+    # Get platform statistics
+    total_authors = db.session.query(User).count()
+    total_papers = db.session.query(Paper).filter(Paper.status == PaperStatus.published).count()
+    
     if 'user_id' in session:
         user_type = session.get('user_type')
-        return render_template('home.html', logged_in=True, user_type=user_type)
-    return render_template('home.html', logged_in=False)
+        return render_template('home.html', logged_in=True, user_type=user_type, total_authors=total_authors, total_papers=total_papers)
+    return render_template('home.html', logged_in=False, total_authors=total_authors, total_papers=total_papers)
 
 
 if __name__ == '__main__':
