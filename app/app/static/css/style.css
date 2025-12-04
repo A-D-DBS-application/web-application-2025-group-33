@@ -215,6 +215,12 @@ textarea {
     max-width: 500px;
 }
 
+.search-box button,
+.search-box .btn {
+    margin-top: 0.75rem;
+    display: block;
+}
+
 .collaborators-list, .companies-list {
     margin-top: 1rem;
 }
