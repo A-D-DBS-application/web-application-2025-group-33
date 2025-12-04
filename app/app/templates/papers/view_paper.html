@@ -210,7 +210,7 @@
         {% endif %}
       </h2>
       
-      {% if not user_has_reviewed %}
+      {% if not user_has_reviewed and not is_collaborator %}
         <div style="background-color: #f8f9fa; padding: 1.5rem; border-radius: 8px; margin-bottom: 1.5rem;">
           <h3 style="margin-top: 0;">Leave a Review</h3>
           <form method="POST" action="{{ url_for('papers.submit_review', paper_id=paper.id) }}">
@@ -261,6 +261,8 @@
             });
           });
         </script>
+      {% elif is_collaborator %}
+        <p style="color: #666; font-style: italic; margin-bottom: 1.5rem;">You cannot review your own paper.</p>
       {% else %}
         <p style="color: #666; font-style: italic; margin-bottom: 1.5rem;">You have already reviewed this paper.</p>
       {% endif %}

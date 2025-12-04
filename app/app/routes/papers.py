@@ -697,6 +697,13 @@ def submit_review(paper_id):
         flash('Paper not found or not published.', 'error')
         return redirect(url_for('papers.company_dashboard' if user_type == 'company' else 'papers.author_dashboard'))
 
+    # Authors cannot review their own papers (if they are collaborators)
+    if user_type == 'author':
+        is_collaborator = db.session.query(PaperCollaborator).filter_by(paper_id=paper_id, user_id=user_id).first()
+        if is_collaborator:
+            flash('You cannot review your own paper.', 'error')
+            return redirect(url_for('papers.view_paper', paper_id=paper_id))
+
     try:
         existing_review = None
         if user_type == 'author':
