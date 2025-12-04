@@ -313,6 +313,43 @@
               {% if review.comment %}
                 <p style="margin: 0.5rem 0 0 0; color: #444;">{{ review.comment }}</p>
               {% endif %}
+              
+              <!-- Edit and Delete buttons for company's own reviews -->
+              {% if session.user_type == 'company' and review.company_id == session.user_id %}
+                <div style="margin-top: 1rem; display: flex; gap: 1rem;">
+                  <button class="btn btn-small" onclick="toggleEditReview({{ review.id }})">Edit</button>
+                  <form method="POST" action="{{ url_for('papers.delete_review', review_id=review.id) }}"
+                        onsubmit="return confirm('Are you sure you want to delete this review?');"
+                        class="inline-form">
+                    <button type="submit" class="btn btn-small btn-danger">Delete</button>
+                  </form>
+                </div>
+                
+                <!-- Edit form (hidden by default) -->
+                <div id="edit-review-{{ review.id }}" style="display: none; margin-top: 1rem; background-color: #f8f9fa; padding: 1rem; border-radius: 8px;">
+                  <form method="POST" action="{{ url_for('papers.edit_review', review_id=review.id) }}">
+                    <div class="form-group">
+                      <label><strong>Rating:</strong></label>
+                      <div class="star-rating-edit" style="font-size: 1.5rem; cursor: pointer; display: flex; gap: 5px;">
+                        {% for i in range(1, 6) %}
+                          <label style="cursor: pointer; display: inline-block;">
+                            <input type="radio" name="rating" value="{{ i }}" {% if i == review.rating %}checked{% endif %} required style="display: none;">
+                            <span class="star-edit" data-value="{{ i }}" style="color: {% if i <= review.rating %}#f39c12{% else %}#ccc{% endif %};">★</span>
+                          </label>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="edit-comment-{{ review.id }}"><strong>Comment:</strong></label>
+                      <textarea id="edit-comment-{{ review.id }}" name="comment" rows="3" style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">{{ review.comment or '' }}</textarea>
+                    </div>
+                    <div style="display: flex; gap: 1rem;">
+                      <button type="submit" class="btn btn-success">Save Changes</button>
+                      <button type="button" class="btn btn-secondary" onclick="toggleEditReview({{ review.id }})">Cancel</button>
+                    </div>
+                  </form>
+                </div>
+              {% endif %}
             </div>
           {% endfor %}
         </div>
@@ -321,6 +358,41 @@
       {% endif %}
     </div>
   {% endif %}
+
+  <script>
+    function toggleEditReview(reviewId) {
+      const editForm = document.getElementById('edit-review-' + reviewId);
+      editForm.style.display = editForm.style.display === 'none' ? 'block' : 'none';
+    }
+    
+    // Star rating interaction for edit forms
+    document.querySelectorAll('.star-rating-edit .star-edit').forEach(star => {
+      star.addEventListener('click', function() {
+        const value = this.getAttribute('data-value');
+        const container = this.closest('.star-rating-edit');
+        container.querySelectorAll('.star-edit').forEach((s, idx) => {
+          s.style.color = idx < value ? '#f39c12' : '#ccc';
+        });
+        this.previousElementSibling.checked = true;
+      });
+      star.addEventListener('mouseover', function() {
+        const value = this.getAttribute('data-value');
+        const container = this.closest('.star-rating-edit');
+        container.querySelectorAll('.star-edit').forEach((s, idx) => {
+          s.style.color = idx < value ? '#f39c12' : '#ccc';
+        });
+      });
+    });
+    document.querySelectorAll('.star-rating-edit').forEach(container => {
+      container.addEventListener('mouseleave', function() {
+        const checked = this.querySelector('input:checked');
+        const value = checked ? checked.value : 0;
+        this.querySelectorAll('.star-edit').forEach((s, idx) => {
+          s.style.color = idx < value ? '#f39c12' : '#ccc';
+        });
+      });
+    });
+  </script>
 
   <div class="mt-3">
     <a href="{{ url_for('papers.author_dashboard' if session.user_type == 'author' else 'papers.company_dashboard') }}"
