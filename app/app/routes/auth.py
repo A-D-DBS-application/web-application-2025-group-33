@@ -64,6 +64,14 @@ def register_author():
             field_of_research = request.form.get('field_of_research', '').strip()
             years_of_experience = request.form.get('years_of_experience', type=int) or 0
 
+            # NIEUW: extra velden voor rating / matching
+            field_of_research = request.form.get('field_of_research')
+            years_of_experience_raw = request.form.get('years_of_experience', 0)
+            try:
+                years_of_experience = int(years_of_experience_raw)
+            except (TypeError, ValueError):
+                years_of_experience = 0
+
             # Check if email already exists
             existing_user = User.query.filter_by(email=email).first()
 
@@ -104,7 +112,9 @@ def register_company():
             password = request.form['password']
             company_name = request.form['company_name']
             address = request.form['address']
-            research_interests = request.form.get('research_interests', '')
+
+            # NIEUW: research interests van formulier lezen
+            research_interests = request.form.get('research_interests')
 
             # Check if email already exists
             existing_company = Company.query.filter_by(email=email).first()
@@ -120,6 +130,7 @@ def register_company():
                 password_hash=password_hash,
                 company_name=company_name,
                 address=address,
+                # NIEUW: hier effectief opslaan
                 research_interests=research_interests,
             )
             db.session.add(company)
