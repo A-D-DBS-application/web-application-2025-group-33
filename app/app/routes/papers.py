@@ -873,3 +873,72 @@ def delete_paper(paper_id):
         flash(f'Error deleting paper: {str(e)}', 'error')
     
     return redirect(url_for('papers.author_dashboard'))
+
+
+@papers_bp.route('/review/<review_id>/edit', methods=['POST'])
+@company_required
+def edit_review(review_id):
+    """Edit a review written by the company"""
+    company_id = session.get('user_id')
+    
+    try:
+        review = db.session.query(Review).filter_by(id=review_id).first()
+        
+        if not review:
+            flash('Review not found.', 'error')
+            return redirect(url_for('papers.author_dashboard'))
+        
+        # Check authorization - only company that wrote it can edit
+        if review.company_id != company_id:
+            flash('You are not authorized to edit this review.', 'error')
+            return redirect(url_for('papers.view_paper', paper_id=review.paper_id))
+        
+        rating = request.form.get('rating', type=int)
+        comment = request.form.get('comment', '').strip()
+        
+        if not rating or rating < 1 or rating > 5:
+            flash('Invalid rating. Please select a rating between 1 and 5.', 'error')
+            return redirect(url_for('papers.view_paper', paper_id=review.paper_id))
+        
+        review.rating = rating
+        review.comment = comment
+        db.session.commit()
+        
+        flash('Review updated successfully!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error updating review: {str(e)}', 'error')
+    
+    return redirect(url_for('papers.view_paper', paper_id=review.paper_id))
+
+
+@papers_bp.route('/review/<review_id>/delete', methods=['POST'])
+@company_required
+def delete_review(review_id):
+    """Delete a review written by the company"""
+    company_id = session.get('user_id')
+    
+    try:
+        review = db.session.query(Review).filter_by(id=review_id).first()
+        
+        if not review:
+            flash('Review not found.', 'error')
+            return redirect(url_for('papers.author_dashboard'))
+        
+        # Check authorization - only company that wrote it can delete
+        if review.company_id != company_id:
+            flash('You are not authorized to delete this review.', 'error')
+            return redirect(url_for('papers.view_paper', paper_id=review.paper_id))
+        
+        paper_id = review.paper_id
+        db.session.delete(review)
+        db.session.commit()
+        
+        flash('Review deleted successfully!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting review: {str(e)}', 'error')
+    
+    return redirect(url_for('papers.view_paper', paper_id=paper_id))
