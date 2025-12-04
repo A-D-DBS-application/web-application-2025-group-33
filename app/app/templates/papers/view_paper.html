@@ -185,6 +185,25 @@
       </ul>
     </div>
 
+    <!-- Paper Statistics for companies -->
+    <div class="card">
+      <h2>Paper Statistics</h2>
+      
+      <div style="display: flex; gap: 2rem; margin-top: 1.5rem;">
+        <!-- Download Counter -->
+        <div style="flex: 1; padding: 1rem; background-color: #e8f4fd; border-radius: 8px;">
+          <div style="font-size: 2rem; font-weight: bold; color: #2980b9;">{{ paper.download_count or 0 }}</div>
+          <div style="color: #666; margin-top: 0.5rem;">Total Downloads</div>
+        </div>
+        
+        <!-- Interest Counter -->
+        <div style="flex: 1; padding: 1rem; background-color: #fff3cd; border-radius: 8px;">
+          <div style="font-size: 2rem; font-weight: bold; color: #f39c12;">{{ paper.interest_count or 0 }}</div>
+          <div style="color: #666; margin-top: 0.5rem;">Companies Interested</div>
+        </div>
+      </div>
+    </div>
+
     <!-- Business Relevance Section -->
     <div class="card" style="margin-top: 2rem; background-color: #f0f8ff; border-left: 4px solid #3498db;">
       <h2>Business Relevance</h2>

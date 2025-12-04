@@ -496,8 +496,10 @@ def view_paper(paper_id):
             .all()
         )
         paper['interested_companies'] = [dict(r._mapping) for r in interests]
+        paper['interest_count'] = len(paper['interested_companies'])
     else:
         paper['interested_companies'] = []
+        paper['interest_count'] = 0
 
     # check if company is interested and get business relevance data
     is_interested = False
