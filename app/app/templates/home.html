@@ -2,6 +2,18 @@
 
 {% block title %}Home - Paper Collaboration Platform{% endblock %}
 
+{% block extra_css %}
+<style>
+    .btn-recommended {
+        background-color: #4ECDC4 !important;
+        color: white !important;
+    }
+    .btn-recommended:hover {
+        background-color: #45B8B0 !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <div class="card">
     <h1>Welcome to Reviewr!</h1>
@@ -16,6 +28,7 @@
                 <a href="{{ url_for('papers.create_paper') }}" class="btn btn-success">Create New Paper</a>
             {% else %}
                 <a href="{{ url_for('papers.company_dashboard') }}" class="btn">Browse Published Papers</a>
+                <a href="{{ url_for('papers.recommended_papers') }}" class="btn btn-recommended">Browse Recommended Papers</a>
                 <a href="{{ url_for('interests.my_interests') }}" class="btn btn-success">View My Interests</a>
             {% endif %}
         </div>
