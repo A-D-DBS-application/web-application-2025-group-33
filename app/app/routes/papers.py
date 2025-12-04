@@ -462,6 +462,7 @@ def view_paper(paper_id):
         'subject': p.subject,
         'status': p.status.value if hasattr(p.status, 'value') else p.status,
         'file_path': p.file_path,
+        'download_count': p.download_count or 0,
         'created_at': p.created_at,
         'updated_at': p.updated_at,
         'created_by': p.created_by,
@@ -649,6 +650,18 @@ def download_paper(paper_id):
 
     # Download file from Supabase Storage
     if p.file_path:
+        # Increment download count for company downloads (not author downloads)
+        if user_type == 'company':
+            try:
+                db.session.execute(
+                    db.text("UPDATE papers SET download_count = COALESCE(download_count, 0) + 1 WHERE id = :paper_id"),
+                    {"paper_id": paper_id}
+                )
+                db.session.commit()
+            except Exception as e:
+                print(f"Error updating download count: {e}")
+                db.session.rollback()
+        
         try:
             pdf_content = download_paper_pdf(p.file_path)
             return send_file(

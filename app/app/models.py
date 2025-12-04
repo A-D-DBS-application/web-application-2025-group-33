@@ -39,6 +39,7 @@ class Paper(db.Model):
     subject = db.Column(db.String(500))  # Paper subject for relevance matching
     status = db.Column(db.Enum(PaperStatus), nullable=False, default=PaperStatus.draft)
     file_path = db.Column(db.String(1000))
+    download_count = db.Column(db.Integer, default=0)  # Track number of downloads
     created_by = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
     created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
     updated_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow, onupdate=datetime.utcnow)

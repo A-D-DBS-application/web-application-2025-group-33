@@ -143,16 +143,29 @@
     </div>
   {% endif %}
 
-  {% if session.user_type == 'author' and paper.status == 'published' and paper.interested_companies %}
-    <!-- Interested companies for authors -->
+  {% if session.user_type == 'author' and paper.status == 'published' %}
+    <!-- Paper Statistics for authors -->
     <div class="card">
-      <h2>Interested Companies ({{ paper.interested_companies|length }})</h2>
-      <p class="text-muted">These companies have marked your paper as interesting:</p>
-      <ul class="companies-list">
-        {% for interest in paper.interested_companies %}
-          <li class="py-1">{{ interest.company_name }}</li>
-        {% endfor %}
-      </ul>
+      <h2>Paper Statistics</h2>
+      
+      <!-- Download Counter -->
+      <div style="margin-bottom: 1.5rem; padding: 1rem; background-color: #e8f4fd; border-radius: 8px;">
+        <div style="font-size: 2rem; font-weight: bold; color: #2980b9;">{{ paper.download_count or 0 }}</div>
+        <div style="color: #666;">Total Downloads</div>
+      </div>
+      
+      {% if paper.interested_companies %}
+        <!-- Interested Companies -->
+        <h3>Interested Companies ({{ paper.interested_companies|length }})</h3>
+        <p class="text-muted">These companies have marked your paper as interesting:</p>
+        <ul class="companies-list">
+          {% for interest in paper.interested_companies %}
+            <li class="py-1">{{ interest.company_name }}</li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="text-muted" style="margin-top: 1rem;">No companies have marked interest in this paper yet.</p>
+      {% endif %}
     </div>
   {% endif %}
 
