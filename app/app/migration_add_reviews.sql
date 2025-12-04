@@ -27,3 +27,4 @@ CREATE INDEX IF NOT EXISTS idx_reviews_paper ON reviews(paper_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_user ON reviews(user_id);
 CREATE INDEX IF NOT EXISTS idx_reviews_company ON reviews(company_id);
 
+
