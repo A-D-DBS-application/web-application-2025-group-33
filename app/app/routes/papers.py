@@ -504,6 +504,7 @@ def view_paper(paper_id):
     if user_type == 'company':
         inter = db.session.query(PaperInterest).filter_by(paper_id=paper_id, company_id=user_id).first()
         is_interested = inter is not None
+        paper['is_interested'] = is_interested  # Add to paper dict for template
         
         # Always calculate and show the relevance score (same as in recommendations)
         business_score = calculate_business_relevance_score(paper_id, user_id)

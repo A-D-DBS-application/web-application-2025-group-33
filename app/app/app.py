@@ -26,6 +26,15 @@ app.register_blueprint(collaborators_bp)
 app.register_blueprint(interests_bp)
 
 
+# Context processor to make logged_in and user_type available in all templates
+@app.context_processor
+def inject_user():
+    return {
+        'logged_in': 'user_id' in session,
+        'user_type': session.get('user_type')
+    }
+
+
 @app.route('/')
 def home():
     """Home page with login/register options"""
