@@ -99,7 +99,7 @@ def calculate_relevance_score(paper_id, company_id):
         .all()
     )
     
-    # Calculate paper subject match score (50% weight) - PRIMARY FACTOR
+    # Calculate paper subject match score (45% weight) - REDUCED FROM 50%
     subject_score = 0.0
     if paper.subject:
         paper_subjects = [s.strip().lower() for s in paper.subject.split(',')]
@@ -119,7 +119,7 @@ def calculate_relevance_score(paper_id, company_id):
             if subject_score > 0:
                 break
     
-    # Calculate author field match score (35% weight) - SECONDARY FACTOR (INCREASED)
+    # Calculate author field match score (35% weight) - UNCHANGED
     field_score = 0.0
     if authors:
         field_matches = 0
@@ -137,15 +137,15 @@ def calculate_relevance_score(paper_id, company_id):
                         field_matches += 1
                         break
         
-        field_score = (field_matches / len(authors)) * 0.35  # 35% weight (increased)
+        field_score = (field_matches / len(authors)) * 0.35  # 35% weight (unchanged)
     
-    # Calculate experience match score (5% weight) - MINOR FACTOR (DECREASED)
+    # Calculate experience match score (10% weight) - INCREASED FROM 5%
     experience_score = 0.0
     if authors:
         avg_experience = sum(
             author.years_of_experience or 0 for author in authors
         ) / len(authors)
-        experience_score = min(1.0, (avg_experience / 20)) * 0.05  # 5% weight (decreased)
+        experience_score = min(1.0, (avg_experience / 20)) * 0.10  # 10% weight (increased)
     
     # Base score (0.0 to 1.0)
     base_score = subject_score + field_score + experience_score
