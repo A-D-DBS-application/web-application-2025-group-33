@@ -826,3 +826,50 @@ def get_business_score_details(paper_id):
     }
     
     return render_template('papers/business_score_details.html', details=details)
+
+
+@papers_bp.route('/paper/<paper_id>/delete', methods=['POST'])
+@author_required
+def delete_paper(paper_id):
+    """Delete a paper (draft or published)"""
+    user_id = session['user_id']
+    
+    try:
+        # Check if user is the creator or a collaborator
+        paper = db.session.query(Paper).filter_by(id=paper_id).first()
+        
+        if not paper:
+            flash('Paper not found.', 'error')
+            return redirect(url_for('papers.author_dashboard'))
+        
+        # Check authorization - must be creator or collaborator
+        if paper.created_by != user_id:
+            is_collaborator = db.session.query(PaperCollaborator).filter_by(
+                paper_id=paper_id, 
+                user_id=user_id
+            ).first()
+            
+            if not is_collaborator:
+                flash('You are not authorized to delete this paper.', 'error')
+                return redirect(url_for('papers.author_dashboard'))
+        
+        # Delete collaborators
+        db.session.query(PaperCollaborator).filter_by(paper_id=paper_id).delete()
+        
+        # Delete paper interests
+        db.session.query(PaperInterest).filter_by(paper_id=paper_id).delete()
+        
+        # Delete reviews
+        db.session.query(Review).filter_by(paper_id=paper_id).delete()
+        
+        # Delete paper
+        db.session.delete(paper)
+        db.session.commit()
+        
+        flash('Paper deleted successfully!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error deleting paper: {str(e)}', 'error')
+    
+    return redirect(url_for('papers.author_dashboard'))

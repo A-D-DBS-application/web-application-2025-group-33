@@ -37,6 +37,12 @@
         {% else %}
           <span class="text-success">✓ Published - Visible to Companies</span>
         {% endif %}
+        
+        <form method="POST" action="{{ url_for('papers.delete_paper', paper_id=paper.id) }}"
+              onsubmit="return confirm('Are you sure you want to delete this paper? This action cannot be undone.');"
+              class="inline-form">
+          <button type="submit" class="btn btn-danger">Delete Paper</button>
+        </form>
       </div>
     {% endif %}
 
