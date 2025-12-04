@@ -61,6 +61,8 @@ def register_author():
             first_name = request.form['first_name']
             last_name = request.form['last_name']
             university = request.form['university']
+            field_of_research = request.form.get('field_of_research', '').strip()
+            years_of_experience = request.form.get('years_of_experience', type=int) or 0
 
             # Check if email already exists
             existing_user = User.query.filter_by(email=email).first()
@@ -77,6 +79,8 @@ def register_author():
                 first_name=first_name,
                 last_name=last_name,
                 university=university,
+                field_of_research=field_of_research if field_of_research else None,
+                years_of_experience=years_of_experience,
             )
             db.session.add(user)
             db.session.commit()

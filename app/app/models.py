@@ -36,6 +36,7 @@ class Paper(db.Model):
     __tablename__ = 'papers'
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     title = db.Column(db.Text, nullable=False)
+    subject = db.Column(db.String(500))  # Paper subject for relevance matching
     status = db.Column(db.Enum(PaperStatus), nullable=False, default=PaperStatus.draft)
     file_path = db.Column(db.String(1000))
     created_by = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
@@ -57,3 +58,20 @@ class PaperInterest(db.Model):
     business_relevance_score = db.Column(db.Float, default=0.0)  # ADD THIS
     is_business_critical = db.Column(db.Boolean, default=False)  # ADD THIS
 
+
+class Review(db.Model):
+    __tablename__ = 'reviews'
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    paper_id = db.Column(db.String(36), db.ForeignKey('papers.id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=True)
+    company_id = db.Column(db.String(36), db.ForeignKey('companies.id'), nullable=True)
+    rating = db.Column(db.Integer, nullable=False)
+    comment = db.Column(db.Text)
+    created_at = db.Column(db.DateTime(timezone=True), default=datetime.utcnow)
+
+    __table_args__ = (
+        db.CheckConstraint('rating >= 1 AND rating <= 5', name='rating_check'),
+        db.CheckConstraint('(user_id IS NOT NULL AND company_id IS NULL) OR (user_id IS NULL AND company_id IS NOT NULL)', name='review_author_or_company_check'),
+        db.UniqueConstraint('paper_id', 'user_id', name='unique_user_review'),
+        db.UniqueConstraint('paper_id', 'company_id', name='unique_company_review'),
+    )
