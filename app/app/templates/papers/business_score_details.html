@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Business Score Details - {{ details.paper_title }}{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h1>Business Relevance Details</h1>
+    <p class="text-muted">Score breakdown for: <strong>{{ details.paper_title }}</strong></p>
+</div>
+
+  <div class="card" style="background-color: #f0f8ff; border-left: 4px solid #3498db;">
+    <h2>Overall Scores</h2>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin-top: 1rem;">
+                <div>
+        <h3 style="margin: 0; color: #666;">Business Relevance Score</h3>
+        <div style="font-size: 2.5rem; color: #3498db; font-weight: bold;">
+          {{ details.total_business_relevance }}%
+                </div>
+            </div>
+      <div>
+        <h3 style="margin: 0; color: #666;">Research Relevance Score</h3>
+        <div style="font-size: 2.5rem; color: #27ae60; font-weight: bold;">
+          {{ details.relevance_score }}%
+        </div>
+                </div>
+                </div>
+            </div>
+
+  <div class="card">
+    <h2>Score Breakdown</h2>
+    
+    <div style="margin-top: 1.5rem;">
+      <h3>Popularity Score: {{ details.popularity_score }}%</h3>
+      <p class="text-muted">Based on how many companies are interested in this paper.</p>
+      <div style="background-color: #ecf0f1; border-radius: 10px; height: 20px; overflow: hidden;">
+        <div style="background-color: #3498db; height: 100%; width: {{ details.popularity_score * 2.5 }}%; max-width: 100%;"></div>
+            </div>
+      <p><strong>{{ details.total_interested_companies }}</strong> companies interested (max contribution at 10+ companies)</p>
+        </div>
+
+    <div style="margin-top: 2rem;">
+      <h3>Business Critical Score: {{ details.business_critical_score }}%</h3>
+      <p class="text-muted">Based on how many companies marked this paper as business critical.</p>
+      <div style="background-color: #ecf0f1; border-radius: 10px; height: 20px; overflow: hidden;">
+        <div style="background-color: #e74c3c; height: 100%; width: {{ details.business_critical_score * 1.67 }}%; max-width: 100%;"></div>
+                </div>
+      <p><strong>{{ details.business_critical_count }}</strong> companies marked as critical (max contribution at 3+ companies)</p>
+            </div>
+        </div>
+
+  <div class="card">
+    <h2>Your Status</h2>
+    <div style="margin-top: 1rem;">
+      {% if details.is_interested %}
+        {% if details.is_business_critical %}
+          <span style="display: inline-block; padding: 0.75rem 1.5rem; background-color: #e74c3c; color: white; border-radius: 25px; font-size: 1.1rem;">
+            ⭐ You marked this as Business Critical
+          </span>
+        {% else %}
+          <span style="display: inline-block; padding: 0.75rem 1.5rem; background-color: #95a5a6; color: white; border-radius: 25px; font-size: 1.1rem;">
+            Not marked as critical by you
+          </span>
+        {% endif %}
+        
+        <div style="margin-top: 1.5rem;">
+          <form method="POST" action="{{ url_for('papers.toggle_business_critical', paper_id=details.paper_id) }}" style="display: inline;">
+            {% if details.is_business_critical %}
+              <button type="submit" class="btn btn-secondary">Unmark as Business Critical</button>
+            {% else %}
+              <button type="submit" class="btn btn-success">Mark as Business Critical</button>
+            {% endif %}
+          </form>
+        </div>
+      {% else %}
+        <span style="display: inline-block; padding: 0.75rem 1.5rem; background-color: #3498db; color: white; border-radius: 25px; font-size: 1.1rem;">
+          Mark as interested to toggle business critical status
+        </span>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="mt-3">
+    <a href="{{ url_for('papers.view_paper', paper_id=details.paper_id) }}" class="btn btn-secondary">← Back to Paper</a>
+  </div>
+{% endblock %}
+

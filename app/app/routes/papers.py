@@ -99,7 +99,7 @@ def calculate_relevance_score(paper_id, company_id):
         .all()
     )
     
-    # Calculate paper subject match score (50% weight) - PRIMARY FACTOR
+    # Calculate paper subject match score (45% weight) - REDUCED FROM 50%
     subject_score = 0.0
     if paper.subject:
         paper_subjects = [s.strip().lower() for s in paper.subject.split(',')]
@@ -119,7 +119,7 @@ def calculate_relevance_score(paper_id, company_id):
             if subject_score > 0:
                 break
     
-    # Calculate author field match score (35% weight) - SECONDARY FACTOR (INCREASED)
+    # Calculate author field match score (35% weight) - UNCHANGED
     field_score = 0.0
     if authors:
         field_matches = 0
@@ -137,15 +137,15 @@ def calculate_relevance_score(paper_id, company_id):
                         field_matches += 1
                         break
         
-        field_score = (field_matches / len(authors)) * 0.35  # 35% weight (increased)
+        field_score = (field_matches / len(authors)) * 0.35  # 35% weight (unchanged)
     
-    # Calculate experience match score (5% weight) - MINOR FACTOR (DECREASED)
+    # Calculate experience match score (10% weight) - INCREASED FROM 5%
     experience_score = 0.0
     if authors:
         avg_experience = sum(
             author.years_of_experience or 0 for author in authors
         ) / len(authors)
-        experience_score = min(1.0, (avg_experience / 20)) * 0.05  # 5% weight (decreased)
+        experience_score = min(1.0, (avg_experience / 20)) * 0.10  # 10% weight (increased)
     
     # Base score (0.0 to 1.0)
     base_score = subject_score + field_score + experience_score
@@ -770,3 +770,57 @@ def toggle_business_critical(paper_id):
     return redirect(url_for('papers.view_paper', paper_id=paper_id))
 
 
+@papers_bp.route('/paper/<paper_id>/business_score_details')
+@company_required
+def get_business_score_details(paper_id):
+    """Show detailed breakdown of business relevance score"""
+    user_id = session['user_id']
+    
+    paper = db.session.query(Paper).filter_by(id=paper_id).first()
+    if not paper:
+        flash('Paper not found.', 'error')
+        return redirect(url_for('papers.company_dashboard'))
+    
+    # Check if user is interested (optional - for showing business critical status)
+    interest = db.session.query(PaperInterest).filter_by(
+        paper_id=paper_id, 
+        company_id=user_id
+    ).first()
+    
+    total_interested = (
+        db.session.query(PaperInterest)
+        .filter(PaperInterest.paper_id == paper_id)
+        .count()
+    )
+    
+    business_critical_count = (
+        db.session.query(PaperInterest)
+        .filter(
+            PaperInterest.paper_id == paper_id,
+            PaperInterest.is_business_critical == True
+        )
+        .count()
+    )
+    
+    popularity_score = min(0.4, (total_interested / 10) * 0.4)
+    business_critical_score = 0.0
+    if business_critical_count > 0:
+        business_critical_score = min(0.6, (business_critical_count / 3) * 0.6)
+    
+    total_score = min(1.0, popularity_score + business_critical_score)
+    relevance_score = calculate_relevance_score(paper_id, user_id)
+    
+    details = {
+        'paper_title': paper.title,
+        'paper_id': paper_id,
+        'total_interested_companies': total_interested,
+        'business_critical_count': business_critical_count,
+        'popularity_score': round(popularity_score * 100, 1),
+        'business_critical_score': round(business_critical_score * 100, 1),
+        'total_business_relevance': round(total_score * 100, 1),
+        'relevance_score': round(relevance_score * 100, 1),
+        'is_business_critical': interest.is_business_critical if interest else False,
+        'is_interested': interest is not None
+    }
+    
+    return render_template('papers/business_score_details.html', details=details)
