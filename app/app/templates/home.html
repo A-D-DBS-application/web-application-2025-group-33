@@ -2,17 +2,6 @@
 
 {% block title %}Home - Paper Collaboration Platform{% endblock %}
 
-{% block extra_css %}
-<style>
-    .btn-recommended {
-        background-color: #4ECDC4 !important;
-        color: white !important;
-    }
-    .btn-recommended:hover {
-        background-color: #45B8B0 !important;
-    }
-</style>
-{% endblock %}
 
 {% block content %}
 <div class="card">
@@ -34,16 +23,16 @@
         </div>
         
         <!-- Platform Statistics Counter -->
-        <div style="margin-top: 2rem; padding: 1.5rem; background-color: #f8f9fa; border-radius: 8px; border: 2px solid #e0e0e0;">
-            <h2 style="margin-top: 0; color: #2c3e50; font-size: 1.3rem;">Platform Statistics</h2>
-            <div style="display: flex; gap: 3rem; margin-top: 1rem;">
-                <div style="flex: 1; text-align: center; padding: 1rem; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="font-size: 2.5rem; font-weight: bold; color: #3498db; margin-bottom: 0.5rem;">{{ total_authors }}</div>
-                    <div style="color: #666; font-size: 1rem;">Active Authors</div>
+        <div class="platform-stats">
+            <h2>Platform Statistics</h2>
+            <div class="platform-stats-grid">
+                <div class="platform-stat-card">
+                    <div class="platform-stat-number platform-stat-number-blue">{{ total_authors }}</div>
+                    <div class="platform-stat-label">Active Authors</div>
                 </div>
-                <div style="flex: 1; text-align: center; padding: 1rem; background-color: #ffffff; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                    <div style="font-size: 2.5rem; font-weight: bold; color: #27ae60; margin-bottom: 0.5rem;">{{ total_papers }}</div>
-                    <div style="color: #666; font-size: 1rem;">Published Papers</div>
+                <div class="platform-stat-card">
+                    <div class="platform-stat-number platform-stat-number-green">{{ total_papers }}</div>
+                    <div class="platform-stat-label">Published Papers</div>
                 </div>
             </div>
         </div>

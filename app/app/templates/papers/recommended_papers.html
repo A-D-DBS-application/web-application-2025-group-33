@@ -5,34 +5,33 @@
 {% block content %}
 <div class="card">
     <h1>Recommended Papers for You</h1>
-    <p style="margin-top: 0.5rem; color: #7f8c8d;">Based on your research interests and preferred researcher experience level.</p>
+    <p class="mt-1 text-muted-small">Based on your research interests and preferred researcher experience level.</p>
 </div>
 
 {% if papers %}
     <div class="paper-list">
         {% for paper in papers %}
             <div class="paper-item">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <div style="flex: 1;">
+                <div class="paper-item-header">
+                    <div class="paper-item-content">
                         <h3>
-                            <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" 
-                               style="color: #2c3e50; text-decoration: none;">
+                            <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="paper-title-link">
                                 {{ paper.title }}
                             </a>
                         </h3>
                         
-                        <div style="margin-top: 0.75rem; margin-bottom: 0.75rem;">
+                        <div class="mt-2 mb-2">
                             {% if paper.relevance_score >= 75 %}
-                                <span style="display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: white; background-color: #27ae60;">Match: {{ paper.relevance_score }}%</span>
+                                <span class="match-badge match-badge-high">Match: {{ paper.relevance_score }}%</span>
                             {% elif paper.relevance_score >= 50 %}
-                                <span style="display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: white; background-color: #f39c12;">Match: {{ paper.relevance_score }}%</span>
+                                <span class="match-badge match-badge-medium">Match: {{ paper.relevance_score }}%</span>
                             {% else %}
-                                <span style="display: inline-block; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: white; background-color: #e74c3c;">Match: {{ paper.relevance_score }}%</span>
+                                <span class="match-badge match-badge-low">Match: {{ paper.relevance_score }}%</span>
                             {% endif %}
                             
                             <!-- Add business relevance badge if available -->
                             {% if paper.get('business_relevance_score', 0) > 0 %}
-                                <span style="display: inline-block; margin-left: 0.5rem; padding: 0.5rem 1rem; border-radius: 20px; font-weight: 600; color: white; background-color: #3498db;">
+                                <span class="business-score-badge">
                                     📊 Business Score: {{ paper.business_relevance_score }}%
                                 </span>
                             {% endif %}
@@ -45,13 +44,13 @@
                 </div>
 
                 {% if paper.authors %}
-                    <div style="margin-top: 1rem; margin-bottom: 1rem;">
+                    <div class="paper-authors-section">
                         <strong>Authors:</strong>
-                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <ul class="ml-3 mt-1">
                             {% for author in paper.authors %}
-                                <li style="margin-bottom: 0.5rem;">
+                                <li class="paper-author-item">
                                     <strong>{{ author.first_name }} {{ author.last_name }}</strong><br>
-                                    <span style="color: #7f8c8d; font-size: 0.9rem;">
+                                    <span class="paper-author-details">
                                         {{ author.university }}<br>
                                         {{ author.years_of_experience }} years in {{ author.field_of_research }}
                                     </span>
@@ -61,18 +60,18 @@
                     </div>
                 {% endif %}
 
-                <div style="margin-top: 1rem;">
+                <div class="mt-2">
                     <a href="{{ url_for('papers.view_paper', paper_id=paper.id) }}" class="btn btn-small">View Details</a>
                     <a href="{{ url_for('papers.download_paper', paper_id=paper.id) }}" 
-                       class="btn btn-small btn-secondary" style="margin-left: 0.5rem;">Download PDF</a>
+                       class="btn btn-small btn-secondary ml-1">Download PDF</a>
                 </div>
             </div>
         {% endfor %}
     </div>
 {% else %}
     <div class="card">
-        <p style="color: #7f8c8d;">No recommended papers found at this time. Check back later as more papers are published!</p>
-        <a href="{{ url_for('papers.company_dashboard') }}" class="btn" style="margin-top: 1rem;">Browse All Papers</a>
+        <p class="text-muted-small">No recommended papers found at this time. Check back later as more papers are published!</p>
+        <a href="{{ url_for('papers.company_dashboard') }}" class="btn mt-2">Browse All Papers</a>
     </div>
 {% endif %}
 {% endblock %}

@@ -4,32 +4,32 @@
 
 {% block content %}
 <!-- Research Interests Section -->
-<div class="card" style="background-color: #f0f8ff; border-left: 4px solid #3498db; margin-bottom: 1.5rem;">
+<div class="card research-interests-card">
     <h2>Your Research Interests</h2>
     <p class="text-muted">Papers matching these interests will get higher relevance scores in recommendations.</p>
     
     {% if company_interests %}
-        <div style="margin: 1rem 0;">
+        <div class="interest-list">
             <strong>Current interests:</strong>
-            <div style="margin-top: 0.5rem;">
+            <div class="interest-list-items">
                 {% for interest in company_interests.split(',') %}
-                    <span style="display: inline-block; background-color: #3498db; color: white; padding: 4px 12px; border-radius: 15px; margin: 2px; font-size: 0.9rem;">
+                    <span class="interest-badge">
                         {{ interest.strip() }}
                     </span>
                 {% endfor %}
             </div>
         </div>
     {% else %}
-        <p style="color: #e74c3c;"><strong>No research interests set.</strong> Add some to get better paper recommendations!</p>
+        <p class="no-interests"><strong>No research interests set.</strong> Add some to get better paper recommendations!</p>
     {% endif %}
     
-    <form method="POST" action="{{ url_for('papers.update_research_interests') }}" style="margin-top: 1rem;">
+    <form method="POST" action="{{ url_for('papers.update_research_interests') }}" class="mt-1">
         <div class="form-group">
             <label for="research_interests"><strong>Update Research Interests:</strong></label>
             <input type="text" id="research_interests" name="research_interests" 
                    value="{{ company_interests or '' }}"
                    placeholder="e.g., Machine Learning, AI, Data Science, Robotics"
-                   style="width: 100%; padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;">
+                   class="input-full-width">
             <small class="text-muted">Separate multiple interests with commas</small>
         </div>
         <button type="submit" class="btn btn-success">Save Interests</button>

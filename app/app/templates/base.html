@@ -10,7 +10,7 @@
 <body>
     <nav>
         <div class="container">
-            <a href="{{ url_for('home') }}" style="margin-left: 0; font-size: 1.5rem; font-weight: bold; padding: 0.5rem 1rem;">💬 Reviewr</a>
+            <a href="{{ url_for('home') }}" class="nav-logo">💬 Reviewr</a>
             <div>
                 {% if logged_in %}
                     {% if user_type == 'author' %}
