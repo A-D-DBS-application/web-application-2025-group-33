@@ -161,7 +161,7 @@ def login():
                 session['user_type'] = 'author'
                 session['email'] = user.email
                 flash('Login successful!', 'success')
-                return redirect(url_for('papers.author_dashboard'))
+                return redirect(url_for('home'))
 
             # Try company login
             company = Company.query.filter_by(email=email).first()
@@ -170,7 +170,7 @@ def login():
                 session['user_type'] = 'company'
                 session['email'] = company.email
                 flash('Login successful!', 'success')
-                return redirect(url_for('papers.company_dashboard'))
+                return redirect(url_for('home'))
 
             flash('Invalid email or password.', 'error')
 
