@@ -60,7 +60,7 @@ As a Company, I want to set my research interests, so that the platform can reco
 
 As a Company, I want to receive recommended papers, so that I quickly find work aligned with my needs.
 
-### Reviews
+## Reviews
 
 As a Company, I want to leave a rating and comment on a paper, so that I can share feedback with the authors.
 
