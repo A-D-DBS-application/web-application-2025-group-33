@@ -1,4 +1,4 @@
-# User stories – Reviewr
+# User stories
 
 ## Authentication
 
