@@ -8,7 +8,7 @@ As a User, I want to log in, so that I can reach my personal dashboard.
 
 ## Author Stories
 
-### Papers aanmaken & beheren
+### Create & Manage Papers
 
 As an Author, I want to create a new paper with a title, subject and PDF upload, so that I can start publishing my research.
 
@@ -36,7 +36,7 @@ As an Author, I want to read reviews from companies, so that I can learn how my 
 
 ## Company Stories
 
-### Papers ontdekken
+### Discover Papers
 
 As a Company, I want to browse published papers, so that I can discover relevant research.
 
@@ -67,3 +67,4 @@ As a Company, I want to leave a rating and comment on a paper, so that I can sha
 As an Author, I want to be prevented from reviewing my own paper, so that scoring stays fair.
 
 As a User, I want to read existing reviews, so that I understand how others evaluate a paper.
+
