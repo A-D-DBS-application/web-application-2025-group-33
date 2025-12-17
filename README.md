@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Flask web application for managing academic paper collaborations between authors and companies. Authors can upload papers, collaborate with other authors, and publish their work. Companies can browse published papers, discover relevant research through AI-powered recommendations, mark their interests, review papers, and download PDFs.
+A Flask web application for managing academic paper collaborations between authors and companies. Authors can upload papers, collaborate with other authors, and publish their work. Companies can browse published papers, discover relevant research through recommendations, mark their interests, review papers, and download PDFs.
 
 ## User Stories
 
